@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\ServiceLayer\ServiceLayer.csproj" />
+    <ProjectReference Include="..\PresentationLayer\PresentationLayer.csproj" />
   </ItemGroup>
 
   <ItemGroup>

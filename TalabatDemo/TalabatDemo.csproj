@@ -16,8 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\infrastructure\PresentationLayer\PresentationLayer.csproj" />
     <ProjectReference Include="..\infrastructure\PresistanceLayer\PresistanceLayer.csproj" />
-    <ProjectReference Include="..\infrastucture\PresentationLayer\PresentationLayer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
 </Project>

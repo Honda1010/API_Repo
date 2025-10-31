@@ -12,18 +12,18 @@ namespace PresistanceLayer
 {
 	public class DataSeeding(StoreDBContext _storeDBContext) : IDataSeeding
 	{
-		public void SeedData()
+		public async Task SeedDataAsync()
 		{
 			try
 			{
-				if (_storeDBContext.Database.GetPendingMigrations().Any())
+				if ((await _storeDBContext.Database.GetPendingMigrationsAsync()).Any())
 				{
-					_storeDBContext.Database.Migrate();
+					await _storeDBContext.Database.MigrateAsync();
 				}
 				if (!_storeDBContext.ProductBrands.Any())
 				{
-					var brandData = File.ReadAllText(@"..\infrastructure\PresistanceLayer\Data\DataSeed\brands.json");
-					var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandData);
+					var brandData = File.OpenRead(@"..\infrastructure\PresistanceLayer\Data\DataSeed\brands.json");
+					var brands = await JsonSerializer.DeserializeAsync<List<ProductBrand>>(brandData);
 					if (brands is not null && brands.Any())
 					{
 						_storeDBContext.ProductBrands.AddRange(brands);
@@ -31,8 +31,8 @@ namespace PresistanceLayer
 				}
 				if (!_storeDBContext.ProductTypes.Any())
 				{
-					var typeData = File.ReadAllText(@"..\infrastructure\PresistanceLayer\Data\DataSeed\types.json");
-					var types = JsonSerializer.Deserialize<List<ProductType>>(typeData);
+					var typeData = File.OpenRead(@"..\infrastructure\PresistanceLayer\Data\DataSeed\types.json");
+					var types = await JsonSerializer.DeserializeAsync<List<ProductType>>(typeData);
 					if (types is not null && types.Any())
 					{
 						_storeDBContext.ProductTypes.AddRange(types);
@@ -40,8 +40,8 @@ namespace PresistanceLayer
 				}
 				if (!_storeDBContext.Products.Any())
 				{
-					var productData = File.ReadAllText(@"..\infrastructure\PresistanceLayer\Data\DataSeed\products.json");
-					var products = JsonSerializer.Deserialize<List<Product>>(productData);
+					var productData = File.OpenRead(@"..\infrastructure\PresistanceLayer\Data\DataSeed\products.json");
+					var products = await JsonSerializer.DeserializeAsync<List<Product>>(productData);
 					if (products is not null && products.Any())
 					{
 						_storeDBContext.Products.AddRange(products);
