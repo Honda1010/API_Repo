@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceAbstractionLayer;
+using Shared.Classes;
 using Shared.Dtos;
 using System;
 using System.Collections.Generic;
@@ -26,9 +27,9 @@ namespace PresentationLayer.Controllers
 			return Ok(brands);
 		}
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProductsAsync()
+		public async Task<ActionResult<PaginatedResult<ProductDto>>> GetAllProductsAsync([FromQuery]ProductQueryParams queryParams)
 		{
-			var products = await _serviceManager.ProductService.GetAllProductsAsync();
+			var products = await _serviceManager.ProductService.GetAllProductsAsync(queryParams);
 			return Ok(products);
 		}
 		[HttpGet("{id}")]

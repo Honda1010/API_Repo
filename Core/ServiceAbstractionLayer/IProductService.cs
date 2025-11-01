@@ -1,4 +1,5 @@
-﻿using Shared.Dtos;
+﻿using Shared.Classes;
+using Shared.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace ServiceAbstractionLayer
 		Task<IEnumerable<TypeDto>> GetAllProductTypesAsync();
 		Task<IEnumerable<BrandDto>> GetAllProductBrandsAsync();
 
-		Task<IEnumerable<ProductDto>> GetAllProductsAsync();
+		Task<PaginatedResult<ProductDto>> GetAllProductsAsync(ProductQueryParams queryParams);
 		Task<ProductDto?> GetProductByIdAsync(int id);
 
 	}

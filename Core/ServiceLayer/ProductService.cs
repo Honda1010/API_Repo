@@ -2,6 +2,8 @@
 using DomainLayer.Contracts;
 using DomainLayer.Models;
 using ServiceAbstractionLayer;
+using ServiceLayer.Specifications;
+using Shared.Classes;
 using Shared.Dtos;
 using System;
 using System.Collections.Generic;
@@ -22,13 +24,16 @@ namespace ServiceLayer
 			return brandDtos;
 		}
 
-		public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+		public async Task<PaginatedResult<ProductDto>> GetAllProductsAsync(ProductQueryParams queryParams)
 		{
+			var specification = new ProductSpecification(queryParams);
 			var repo = _unitOfWork.GetRepository<Product, int>();
-			var products = await repo.GetAllAsync();
+			var products = await repo.GetAllAsync(specification);
 			// Mapping logic from Product to ProductDto would go here
 			var productDtos = _mapper.Map<IEnumerable<ProductDto>>(products);
-			return productDtos;
+			var countSpecification = new ProductSpecification(queryParams);
+			var totalItems = await repo.GetCountAsync(countSpecification);
+			return new PaginatedResult<ProductDto>(queryParams.PageIndex, queryParams.PageSize, totalItems, productDtos);
 
 		}
 
@@ -43,8 +48,9 @@ namespace ServiceLayer
 
 		public async Task<ProductDto?> GetProductByIdAsync(int id)
 		{
+			var specification = new ProductSpecification(id);
 			var repo = _unitOfWork.GetRepository<Product, int>();
-			var product =  await repo.GetByIdAsync(id);
+			var product =  await repo.GetByIdAsync(specification);
 			if (product == null) return null;
 			// Mapping logic from Product to ProductDto would go here
 			var productDto = _mapper.Map<ProductDto>(product);

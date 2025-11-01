@@ -1,5 +1,6 @@
 ﻿using DomainLayer.Contracts;
 using DomainLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,13 @@ namespace PresistanceLayer.Reposirtory
 		
 		public void Update(Tentity entity)
 			=> _context.Set<Tentity>().Update(entity);
-		
+		public async Task<IEnumerable<Tentity>> GetAllAsync(ISpecification<Tentity, TKey> specification)
+			=> await SpecificationEvaluator.GetQuery(_context.Set<Tentity>().AsQueryable(), specification).ToListAsync();
+		public async Task<Tentity?> GetByIdAsync(ISpecification<Tentity, TKey> specification)
+			=> await SpecificationEvaluator.GetQuery(_context.Set<Tentity>().AsQueryable(), specification).FirstOrDefaultAsync();
+		public async Task<int> GetCountAsync(ISpecification<Tentity, TKey> specification)
+			=> await SpecificationEvaluator.GetQuery(_context.Set<Tentity>().AsQueryable(), specification).CountAsync();
+
 
 	}
 }
