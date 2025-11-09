@@ -1,4 +1,4 @@
-﻿using DomainLayer.Models;
+﻿using DomainLayer.Models.ProductModels;
 using Shared.Classes;
 using Shared.Enums;
 using System;

@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using DomainLayer.Contracts;
-using DomainLayer.Models;
+using DomainLayer.Exceptions;
+using DomainLayer.Models.ProductModels;
 using ServiceAbstractionLayer;
 using ServiceLayer.Specifications;
 using Shared.Classes;
-using Shared.Dtos;
+using Shared.Dtos.ProductDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace ServiceLayer
 			var specification = new ProductSpecification(id);
 			var repo = _unitOfWork.GetRepository<Product, int>();
 			var product =  await repo.GetByIdAsync(specification);
-			if (product == null) return null;
+			if (product is null) throw new ProductNotFoundException(id);
 			// Mapping logic from Product to ProductDto would go here
 			var productDto = _mapper.Map<ProductDto>(product);
 			return productDto;

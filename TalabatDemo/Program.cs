@@ -1,11 +1,17 @@
 
 using DomainLayer.Contracts;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens.Experimental;
 using PresistanceLayer;
 using PresistanceLayer.Reposirtory;
 using ServiceAbstractionLayer;
 using ServiceLayer; 
 using System.Threading.Tasks;
+using TalabatDemo.CustomMiddleware;
+using Shared.ErrorModels;
+using TalabatDemo.Factory;
+using TalabatDemo.Extensions;
 
 namespace TalabatDemo
 {
@@ -18,29 +24,28 @@ namespace TalabatDemo
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<StoreDBContext>(options =>
-            {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            });
-            builder.Services.AddScoped<IDataSeeding,DataSeeding>();
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddScoped<IProductService, ProductService>();
-            builder.Services.AddScoped<IServiceManager, ServiceManager>();
+			// Register Swagger Services
+            builder.Services.AddSwaggerServices();
 
-			builder.Services.AddAutoMapper((x) => { },typeof(ServiceLayerAssemblyReference).Assembly);
+			// Register Infrastrucure Services
+			builder.Services.AddInfrastructureServices(builder.Configuration);
+			// Register Application Services
+			builder.Services.AddApplicationServices();
+
+
+			// register Web Application Services
+			builder.Services.AddWebApplicationServices();
+
 
 
 
 			var app = builder.Build();
 
-            using var scope = app.Services.CreateScope();
-            await scope.ServiceProvider.GetRequiredService<IDataSeeding>().SeedDataAsync();
-
+            await app.SeedDataAsync();
 
 			// Configure the HTTP request pipeline.
+			// Use Custom Exception Handling Middleware
+			app.UseMiddleware<CustomExceptionHandlerMiddleware>();
 			if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared.Dtos
+namespace DomainLayer.Exceptions
 {
-	 public class BrandDto
+	public abstract class NotFoundException(string message): Exception(message)
 	{
-		public int Id { get; set; }
-		public string Name { get; set; } = null!;
 	}
 }
