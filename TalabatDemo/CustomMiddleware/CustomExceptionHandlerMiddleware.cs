@@ -1,4 +1,7 @@
-﻿using DomainLayer.Exceptions;
+﻿using Azure.Core;
+using DomainLayer.Exceptions;
+using Shared.ErrorModels;
+using System.ComponentModel;
 
 namespace TalabatDemo.CustomMiddleware
 {
@@ -24,20 +27,22 @@ namespace TalabatDemo.CustomMiddleware
 
 			static async Task ErrorHandler(HttpContext httpContext, Exception ex)
 			{
+				// set content type
+				httpContext.Response.ContentType = "application/json";
+				// Create response model
+				var response = new ErrorToReturn
+				{
+					Message = ex.Message
+				};
 				//set Status Code to response
 				httpContext.Response.StatusCode = ex switch
 				{
 					NotFoundException => StatusCodes.Status404NotFound,
+					UnAuthorizedException => StatusCodes.Status401Unauthorized,
+					BadRequestException badRequestException => BadRequestHandler(badRequestException, response),
 					_ => StatusCodes.Status500InternalServerError
 				};
-				// set content type
-				httpContext.Response.ContentType = "application/json";
-				// Create response model
-				var response = new
-				{
-					StatusCode = StatusCodes.Status500InternalServerError,
-					Message = ex.Message
-				};
+				response.StatusCode= httpContext.Response.StatusCode;
 				// write response to http context
 				await httpContext.Response.WriteAsJsonAsync(response);
 			}
@@ -54,6 +59,10 @@ namespace TalabatDemo.CustomMiddleware
 					};
 					await httpContext.Response.WriteAsJsonAsync(response);
 				}
+			}
+			static int BadRequestHandler(BadRequestException badRequest, ErrorToReturn response) {
+				response.Errors= badRequest.Errors;
+				return StatusCodes.Status400BadRequest;
 			}
 		}
 	}

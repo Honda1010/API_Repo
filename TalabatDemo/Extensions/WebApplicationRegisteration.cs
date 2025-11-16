@@ -8,6 +8,7 @@ namespace TalabatDemo.Extensions
 		{
 			using var scope = app.Services.CreateScope();
 			await scope.ServiceProvider.GetRequiredService<IDataSeeding>().SeedDataAsync();
+			await scope.ServiceProvider.GetRequiredService<IDataSeeding>().SeedIdentityDataAsync();
 		}
 	}
 }

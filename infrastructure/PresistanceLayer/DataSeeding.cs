@@ -1,5 +1,7 @@
 ﻿using DomainLayer.Contracts;
+using DomainLayer.Models.IdentityModels;
 using DomainLayer.Models.ProductModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace PresistanceLayer
 {
-	public class DataSeeding(StoreDBContext _storeDBContext) : IDataSeeding
+	public class DataSeeding(StoreDBContext _storeDBContext,RoleManager<IdentityRole> _roleManager ,UserManager<ApplicationUser> _userManager) : IDataSeeding
 	{
 		public async Task SeedDataAsync()
 		{
@@ -55,6 +57,54 @@ namespace PresistanceLayer
 				throw;
 			}
 
+		}
+
+		public async Task SeedIdentityDataAsync()
+		{
+			try
+			{
+				if (!_roleManager.Roles.Any())
+				{
+					var roles = new List<IdentityRole>
+				{
+					new IdentityRole{ Name="Admin"},
+					new IdentityRole{ Name="SuperAdmin"},
+				};
+					foreach (var role in roles)
+					{
+						await _roleManager.CreateAsync(role);
+					}
+				}
+				if (!_userManager.Users.Any())
+				{
+					var user01 = new ApplicationUser
+					{
+						Email = "mohanedmohamed267@gmail.com",
+						DisplayName = "Mohaned Mohamed",
+						UserName = "Mohaned267",
+						PhoneNumber = "01140014117"
+					};
+					var user02 = new ApplicationUser
+					{
+						Email = "maimohamed99@gmail.com",
+						DisplayName = "Mai Mohamed",
+						UserName = "Mai267",
+						PhoneNumber = "01234567890"
+					};
+					foreach (var user in new List<ApplicationUser> { user01, user02 })
+					{
+						var result = await _userManager.CreateAsync(user, "P@ssw0rd");
+					}
+					await _userManager.AddToRoleAsync(user01, "Admin");
+					await _userManager.AddToRoleAsync(user02, "SuperAdmin");
+
+				}
+			}
+			catch (Exception)
+			{
+
+				throw;
+			}
 		}
 	}
 }
