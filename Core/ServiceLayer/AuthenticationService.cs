@@ -41,7 +41,7 @@ namespace ServiceLayer
 
 		public async Task<AddressDto> GetCurrentUserAddressAsync(string email)
 		{
-			var user = await _userManager.Users.Include(u => u.Address).FirstOrDefaultAsync()?? throw new UserNotFoundException(email);
+			var user = await _userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Email==email)?? throw new UserNotFoundException(email);
 
 			if (user.Address is not null)
 			{
@@ -54,7 +54,7 @@ namespace ServiceLayer
 		}
 		public async Task<AddressDto> UpdateCurrentUserAddressAsync(string email, AddressDto address)
 		{
-			var user = await _userManager.Users.Include(u => u.Address).FirstOrDefaultAsync() ?? throw new UserNotFoundException(email);
+			var user = await _userManager.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Email == email) ?? throw new UserNotFoundException(email);
 			if (user.Address is not null)
 			{
 				//update
