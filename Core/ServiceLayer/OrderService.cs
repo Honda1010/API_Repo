@@ -4,6 +4,7 @@ using DomainLayer.Exceptions;
 using DomainLayer.Models.OrderModels;
 using DomainLayer.Models.ProductModels;
 using ServiceAbstractionLayer;
+using ServiceLayer.Specifications;
 using Shared.Dtos.IdentityDtos;
 using Shared.Dtos.OrderDtos;
 using Shared.Dtos.ProductDtos;
@@ -53,6 +54,28 @@ namespace ServiceLayer
 			// Return OrderToReturnDto
 			return _mapper.Map<OrderToReturnDto>(order);
 
+		}
+
+		public async Task<IEnumerable<DeliverMethodDto>> GetAllDeliveryMethodAsync()
+		{
+			var DeliveryMethods =  await _unitOfWork.GetRepository<DeliveryMethod, int>().GetAllAsync();
+			return _mapper.Map<IEnumerable<DeliverMethodDto>>(DeliveryMethods);
+			
+		}
+
+		public async Task<IEnumerable<OrderToReturnDto>> GetAllOrderAsync(string UserEmail)
+		{
+			 var spec = new OrderSpecification(UserEmail);
+			var orders = await _unitOfWork.GetRepository<Order,Guid>().GetAllAsync(spec);
+			return _mapper.Map<IEnumerable<OrderToReturnDto>>(orders);
+
+		}
+
+		public async Task<IEnumerable<OrderToReturnDto>> GetAllOrderById(Guid id)
+		{
+			var spec = new OrderSpecification(id);
+			var orders =  await _unitOfWork.GetRepository<Order,Guid>().GetAllAsync(spec);
+			return _mapper.Map<IEnumerable<OrderToReturnDto>>(orders);
 		}
 	}
 }

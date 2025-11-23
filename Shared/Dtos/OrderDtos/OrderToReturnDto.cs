@@ -17,7 +17,7 @@ namespace Shared.Dtos.OrderDtos
 		public string OrderStatus { get; set; } = null!;
 		public string DeliveryMethod { get; set; } = null!; //Name of the delivery method
 
-		public AddressDto Address { get; set; }
+		public AddressDto Address { get; set; } = null!;
 		public ICollection<OrderItemDto> Items { get; set; } = [];
 
 
